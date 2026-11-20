@@ -162,7 +162,6 @@ impl Account {
         settings: AccountSettings,
         backend: Backend,
     ) -> Self {
-        let open_chat = settings.last_chat.clone();
         let chat_filter = match settings
             .list_filter
             .as_deref()
@@ -189,7 +188,7 @@ impl Account {
             chats: Vec::new(),
             contacts: HashMap::new(),
             conversations: HashMap::new(),
-            open_chat,
+            open_chat: None,
             prefetch_sent: None,
             scroll_chat_into_view: None,
             drafts: HashMap::new(),
