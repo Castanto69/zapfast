@@ -1,0 +1,35 @@
+name: Build Custom Windows Zip
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-windows-zip:
+    name: Build Windows x64 Zip
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+      - run: rustup target add x86_64-pc-windows-msvc
+      - name: Compile release binary
+        run: cargo build --locked --release --target x86_64-pc-windows-msvc
+      - name: Package portable folder
+        shell: bash
+        run: |
+          mkdir -p dist/zapfast-custom
+          cp target/x86_64-pc-windows-msvc/release/zapfast.exe dist/zapfast-custom/
+          cp README.md LICENSE THIRD-PARTY-NOTICES.md packaging/zapfast-portable.txt dist/zapfast-custom/
+      - name: Upload zip artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: zapfast-custom-x86_64-pc-windows-msvc
+          path: dist/zapfast-custom
+          if-no-files-found: error
